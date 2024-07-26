@@ -3,8 +3,8 @@
 Youkai is a [Minecraft Resourcepack](https://minecraft.wiki/w/Resource_pack) compiler/generator
 
 It can do following:
-- Generate items with custom textures automatically just from texture
-- Compile all custom models into one item with custom model data automatically
+- Generate item models with custom textures automatically just from texture file
+- Compile all custom models into one item with automatically assigned custom model data
 - Send data to server-side plugin with all of compiled information so the server can parse it
 - Obfuscate resourcepack files
 - Obfuscate shader files
