@@ -7,6 +7,7 @@ import cz.lukynka.objects.Item
 import cz.lukynka.objects.ItemOverride
 import cz.lukynka.objects.ItemTextures
 import cz.lukynka.objects.Predicate
+import cz.lukynka.shuffled
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class CustomModelsCompiler(private var compiler: BasePackCompiler): Compiler {
 
-    private val outModelList: MutableList<String> = mutableListOf()
+    private var outModelList: MutableMap<String, String> = mutableMapOf()
     private val serverModels = mutableListOf<YoukaiServerModel>()
     
     override fun compile(): CompiledResult {
@@ -35,8 +36,7 @@ class CustomModelsCompiler(private var compiler: BasePackCompiler): Compiler {
             val file = File(modelFile)
             file.createNewFile()
             file.writeText(item)
-            outModelList.add("${compiler.name}/${compiler.youkaiCompiledModels}/${it.getAssetNameWithoutExtension()}")
-            serverModels.add(YoukaiServerModel(it.getNonObfAssetName(), null, Config.ITEM))
+            outModelList[it.getNonObfAssetNameWithoutExtension()] = "${compiler.name}/${compiler.youkaiCompiledModels}/${it.getAssetNameWithoutExtension()}"
         }
 
         compiler.pack.custom3dModels.forEach {
@@ -52,20 +52,19 @@ class CustomModelsCompiler(private var compiler: BasePackCompiler): Compiler {
             val file = File(modelFile)
             file.createNewFile()
             file.writeText(outModelFile)
-            outModelList.add("${compiler.name}/${compiler.youkaiCompiledModels}/${it.getModelAssetNameWithoutExtension()}")
-            serverModels.add(YoukaiServerModel(it.modelFile.nameWithoutExtension, null, Config.ITEM))
+            outModelList[it.modelFile.nameWithoutExtension] = "${compiler.name}/${compiler.youkaiCompiledModels}/${it.getModelAssetNameWithoutExtension()}"
+//            serverModels.add(YoukaiServerModel(it.modelFile.nameWithoutExtension, null, Config.ITEM))
         }
 
         val baseCustomModelPath = "${compiler.path}/assets/minecraft/models/item/"
         File(baseCustomModelPath).mkdirs()
         val overrides = mutableListOf<ItemOverride>()
         val atomicId = AtomicInteger(1)
-        if(Config.SHUFFLE_IDS_ON_COMPILE) outModelList.shuffle()
+        if(Config.SHUFFLE_IDS_ON_COMPILE) outModelList = outModelList.shuffled().toMutableMap()
         outModelList.forEach { model ->
             val id = atomicId.getAndIncrement()
-            val serverModel = serverModels.find { model.contains(it.modelId) } ?: throw Exception("Model $model not found in server models")
-            serverModel.customModelId = id
-            overrides.add(ItemOverride(Predicate(id), model))
+            overrides.add(ItemOverride(Predicate(id), model.value))
+            serverModels.add(YoukaiServerModel(model.key, id, Config.ITEM))
         }
 
         val item = Item("item/generated", ItemTextures("item/${Config.ITEM}"), overrides).toJson()

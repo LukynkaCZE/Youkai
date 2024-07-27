@@ -25,7 +25,7 @@ class Custom2dItem(val file: File): ResourcepackObject {
         return if(Config.OBFUSCATE) obf else file.nameWithoutExtension
     }
 
-    fun getNonObfAssetName(): String {
+    fun getNonObfAssetNameWithoutExtension(): String {
         return file.nameWithoutExtension
     }
 }
