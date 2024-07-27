@@ -18,7 +18,7 @@ class YoukaiPack(var name: String) {
 
     fun compile(path: String) {
 
-        val customModelDataCount = AtomicInteger()
+        val customModelDataCount = AtomicInteger(1)
         val idToModelPathMap: MutableMap<Int, String> = mutableMapOf()
 
         val out = File(path)
