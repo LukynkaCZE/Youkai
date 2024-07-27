@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-fun atlasFileContent(name: String): String {
-    return ResourceAtlas(AtlasSource("directory", name, "$name/")).toJson()
+fun atlasFileContent(name: String): ResourceAtlas {
+    return ResourceAtlas(AtlasSource("directory", name, "$name/"))
 }
 
 @Serializable
@@ -20,7 +20,6 @@ data class AtlasSource(
 data class ResourceAtlas(
     val sources: List<AtlasSource>
 ) {
-
     constructor(vararg source: AtlasSource): this(source.toList())
 
     fun toJson(): String {
