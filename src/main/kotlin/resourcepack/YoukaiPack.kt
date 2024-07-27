@@ -14,8 +14,6 @@ class YoukaiPack(var name: String) {
     var compiledPackFileName = name
     var packFormat = PackMcMeta(PackFormat(PackVersion.MC_1_21, "Youkai Compiled Resourcepack"))
 
-
-
     var custom2dItems: MutableList<Custom2dItem> = mutableListOf()
     var customModels: MutableList<CustomModel> = mutableListOf()
 
