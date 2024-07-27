@@ -62,6 +62,10 @@ class YoukaiPack(var name: String) {
             idToModelPathMap[id] = "${name}/youkai-compiled/${it.file.nameWithoutExtension}"
         }
 
+        customModels.shuffled().forEach {
+
+        }
+
         val baseCustomModelPath = "$path/assets/minecraft/models/item/"
         File(baseCustomModelPath).mkdirs()
 
