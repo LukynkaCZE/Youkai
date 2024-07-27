@@ -14,7 +14,7 @@ class BasePackCompiler(val pack: YoukaiPack, val path: String) {
 
     val name = if(Config.OBFUSCATE) Obfuscatory.getNext() else pack.name
 
-    val compilers = listOf<Compiler>(
+    private val compilers = listOf<Compiler>(
         PackFormatCompiler(this),
         AtlasCompiler(this),
         CustomModelsCompiler(this),
@@ -22,27 +22,24 @@ class BasePackCompiler(val pack: YoukaiPack, val path: String) {
     )
 
     fun compile() {
-        val results = mutableListOf<CompiledResult>()
-        var success = 0
-        var failed = 0
-        var total = 0
-        compilers.forEach {
+        val results = compilers.mapIndexed { index, compiler ->
             try {
-                val result = it.compile()
-                results.add(result)
-                success++
-                total++
-                log("[${total}/${compilers.size}] ${it::class.simpleName} finished!", LogType.SUCCESS)
+                val result = compiler.compile()
+                log("[${index + 1}/${compilers.size}] ${compiler::class.simpleName} finished!", LogType.SUCCESS)
+                result
             } catch (ex: Exception) {
-                failed++
-                total++
-                log("[${total}/${compilers.size}] Error when compiling ${it::class.simpleName}: $ex", LogType.ERROR)
+                log("[${index + 1}/${compilers.size}] Error when compiling ${compiler::class.simpleName}: $ex", LogType.ERROR)
                 log(ex)
+                null
             }
         }
-        log("[${total}/${compilers.size}] Finished compiling pack ${pack.name}!", LogType.SUCCESS)
-        log("- ${AnsiColor.AQUA}$total total", LogType.INFORMATION)
-        log("- ${AnsiColor.BRIGHT_GREEN}$success successful", LogType.INFORMATION)
+
+        val successful = results.count { it != null }
+        val failed = results.size - successful
+
+        log("[${compilers.size}/${compilers.size}] Finished compiling pack ${pack.name}!", LogType.SUCCESS)
+        log("- ${AnsiColor.AQUA}${results.size} total", LogType.INFORMATION)
+        log("- ${AnsiColor.BRIGHT_GREEN}$successful successful", LogType.INFORMATION)
         log("- ${AnsiColor.RED}$failed failed", LogType.INFORMATION)
     }
 }

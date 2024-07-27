@@ -53,7 +53,6 @@ class CustomModelsCompiler(private var compiler: BasePackCompiler): Compiler {
             file.createNewFile()
             file.writeText(outModelFile)
             outModelList[it.modelFile.nameWithoutExtension] = "${compiler.name}/${compiler.youkaiCompiledModels}/${it.getModelAssetNameWithoutExtension()}"
-//            serverModels.add(YoukaiServerModel(it.modelFile.nameWithoutExtension, null, Config.ITEM))
         }
 
         val baseCustomModelPath = "${compiler.path}/assets/minecraft/models/item/"
