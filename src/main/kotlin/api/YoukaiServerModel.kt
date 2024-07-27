@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class YoukaiServerModel(
     val modelId: String,
-    val customModelId: Int,
+    var customModelId: Int? = null,
     val baseMaterial: String
 )

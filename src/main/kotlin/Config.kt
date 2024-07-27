@@ -6,6 +6,7 @@ object Config {
     const val AUTH_ENABLED = true
     const val PORT = 6969
     const val ITEM = "iron_ingot"
-    const val OBFUSCATE = true
+    const val OBFUSCATE = false
+    const val SHUFFLE_IDS_ON_COMPILE = true
     val OBFUSCATION_STRATEGY = ObfuscationStrategy.BASE64
 }
