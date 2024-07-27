@@ -17,7 +17,8 @@ class BasePackCompiler(val pack: YoukaiPack, val path: String) {
     val compilers = listOf<Compiler>(
         PackFormatCompiler(this),
         AtlasCompiler(this),
-        CustomModelsCompiler(this)
+        CustomModelsCompiler(this),
+        ZipCompiler(this)
     )
 
     fun compile() {
@@ -35,7 +36,8 @@ class BasePackCompiler(val pack: YoukaiPack, val path: String) {
             } catch (ex: Exception) {
                 failed++
                 total++
-                log("[${total}/${compilers.size}] Error when compiling ${it::class.simpleName}: $ex")
+                log("[${total}/${compilers.size}] Error when compiling ${it::class.simpleName}: $ex", LogType.ERROR)
+                log(ex)
             }
         }
         log("[${total}/${compilers.size}] Finished compiling pack ${pack.name}!", LogType.SUCCESS)

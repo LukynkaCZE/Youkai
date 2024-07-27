@@ -15,6 +15,8 @@ fun main() {
     Youkai.webServer = WebServer(Config.PORT)
 
     val pack = YoukaiPack("test")
+    pack.compiledPackFileName = "§c§lTESTING TESTING"
+    pack.packFormat.pack.description = "§e:3"
     val dir = File("./test/2d/")
     dir.listFiles()?.forEach {
         pack.custom2dItems.add(Custom2dItem(it))
