@@ -7,3 +7,4 @@ interface Compiler {
 interface CompiledResult {
 
 }
+

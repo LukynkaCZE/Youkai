@@ -27,6 +27,7 @@ fun main() {
         pack.custom3dModels.add(Custom3dModel(File(it.path), File(it.path.replace(it.extension, "png"))))
     }
 
+    //TODO add way to add base pack (local, url or git)
 
     pack.compile("C:/Users/LukynkaCZE/AppData/Roaming/com.modrinth.theseus/profiles/1.21/resourcepacks/${pack.name}")
 }
