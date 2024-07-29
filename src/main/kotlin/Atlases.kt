@@ -18,9 +18,9 @@ data class AtlasSource(
 
 @Serializable
 data class ResourceAtlas(
-    val sources: List<AtlasSource>
+    val sources: MutableList<AtlasSource>
 ) {
-    constructor(vararg source: AtlasSource): this(source.toList())
+    constructor(vararg source: AtlasSource): this(source.toMutableList())
 
     fun toJson(): String {
         return Json.encodeToString<ResourceAtlas>(this)

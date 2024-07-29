@@ -1,6 +1,9 @@
 package cz.lukynka.compilers
 
 import cz.lukynka.Config
+import cz.lukynka.api.YoukaiServerModel
+import cz.lukynka.api.YoukaiSync
+import cz.lukynka.api.sendCompiledPackRequest
 import cz.lukynka.obfuscation.Obfuscatory
 import cz.lukynka.prettylog.AnsiColor
 import cz.lukynka.prettylog.LogType
@@ -14,14 +17,17 @@ class BasePackCompiler(val pack: YoukaiPack, val path: String) {
 
     val name = if(Config.OBFUSCATE) Obfuscatory.getNext() else pack.name
 
-    private val compilers = listOf<Compiler>(
+    private val compilers = mutableListOf<Compiler>(
+        PrepareFilesCompiler(this),
+        MergeCompiler(this),
         PackFormatCompiler(this),
         AtlasCompiler(this),
         CustomModelsCompiler(this),
-        ZipCompiler(this)
     )
 
     fun compile() {
+        if(Config.COMPILE_TO_ZIP) compilers.add(ZipCompiler(this))
+
         val results = compilers.mapIndexed { index, compiler ->
             try {
                 val result = compiler.compile()
@@ -41,5 +47,19 @@ class BasePackCompiler(val pack: YoukaiPack, val path: String) {
         log("- ${AnsiColor.AQUA}${results.size} total", LogType.INFORMATION)
         log("- ${AnsiColor.BRIGHT_GREEN}$successful successful", LogType.INFORMATION)
         log("- ${AnsiColor.RED}$failed failed", LogType.INFORMATION)
+
+        val models = mutableListOf<YoukaiServerModel>()
+        results.forEach { result ->
+            when(result) {
+                is CustomModelResponse -> {
+                    result.items.forEach { resultItem ->
+                        models.add(resultItem)
+                    }
+                }
+            }
+        }
+
+        val sync = YoukaiSync(models)
+        sendCompiledPackRequest(sync)
     }
 }
