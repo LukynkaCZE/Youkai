@@ -44,3 +44,5 @@ gradle/wrapper
 gradlew
 gradlew.bat
 .env
+temp
+test/3d
