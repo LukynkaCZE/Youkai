@@ -1,6 +1,6 @@
 package cz.lukynka.youkai.objects
 
-import cz.lukynka.youkai.Config
+import cz.lukynka.youkai.config.ConfigManager
 import cz.lukynka.youkai.obfuscation.Obfuscatory
 import java.io.File
 
@@ -9,6 +9,8 @@ class Custom3dModel(val modelFile: File, val textureFile: File): ResourcepackObj
     init {
         verify()
     }
+
+    val config = ConfigManager.currentConfig.compiler
 
     override fun verify() {
         if(!modelFile.exists()) throw Exception("File ${modelFile.name} does not exist!")
@@ -21,18 +23,18 @@ class Custom3dModel(val modelFile: File, val textureFile: File): ResourcepackObj
     val textureObf = Obfuscatory.getNext()
 
     fun getTextureAssetName(): String {
-        return if(Config.OBFUSCATE) "${textureObf}.${textureFile.extension}" else textureFile.name
+        return if(config.obfuscation) "${textureObf}.${textureFile.extension}" else textureFile.name
     }
 
     fun getTextureAssetNameWithoutExtension(): String {
-        return if(Config.OBFUSCATE) textureObf else textureFile.nameWithoutExtension
+        return if(config.obfuscation) textureObf else textureFile.nameWithoutExtension
     }
 
     fun getModelAssetName(): String {
-        return if(Config.OBFUSCATE) "${modelObf}.${modelFile.extension}" else modelFile.name
+        return if(config.obfuscation) "${modelObf}.${modelFile.extension}" else modelFile.name
     }
 
     fun getModelAssetNameWithoutExtension(): String {
-        return if(Config.OBFUSCATE) modelObf else modelFile.nameWithoutExtension
+        return if(config.obfuscation) modelObf else modelFile.nameWithoutExtension
     }
 }

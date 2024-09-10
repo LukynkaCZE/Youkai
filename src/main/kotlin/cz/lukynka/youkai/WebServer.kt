@@ -1,14 +1,14 @@
 package cz.lukynka.youkai
 
-import cz.lukynka.cz.lukynka.youkai.Environment
 import cz.lukynka.lkws.LightweightWebServer
 import cz.lukynka.lkws.responses.Response
+import cz.lukynka.youkai.config.ConfigManager
 
 class WebServer(port: Int) {
 
     private fun isAuthenticated(response: Response): Boolean {
-        if(Config.AUTH_ENABLED) return true
-        return response.requestHeaders["Authentication"] == Environment.TOKEN
+        if(!ConfigManager.currentConfig.general.auth) return true
+        return response.requestHeaders["Authentication"] == ConfigManager.currentConfig.general.youkaiToken
     }
 
     init {

@@ -1,7 +1,5 @@
 package cz.lukynka.youkai.compilers
 
-import cz.lukynka.youkai.compilers.*
-import cz.lukynka.youkai.Config
 import cz.lukynka.youkai.YoukaiServerModel
 import cz.lukynka.youkai.YoukaiSync
 import cz.lukynka.youkai.sendCompiledPackRequest
@@ -9,7 +7,11 @@ import cz.lukynka.youkai.obfuscation.Obfuscatory
 import cz.lukynka.prettylog.AnsiColor
 import cz.lukynka.prettylog.LogType
 import cz.lukynka.prettylog.log
+import cz.lukynka.youkai.config.ConfigManager
+import cz.lukynka.youkai.config.PublishingApis.*
+import cz.lukynka.youkai.publishing.AmazonS3Publisher
 import cz.lukynka.youkai.resourcepack.YoukaiPack
+import cz.lukynka.youkai.publishing.CloudflareR2Publisher
 import java.io.File
 import java.util.UUID
 
@@ -21,10 +23,12 @@ class BasePackCompiler(val pack: YoukaiPack, val outputPath: String) {
         File(path).deleteRecursively()
     }
 
-    val youkaiCompiledTextures = if(Config.OBFUSCATE) Obfuscatory.getNext() else "youkai-compiled"
-    val youkaiCompiledModels = if(Config.OBFUSCATE) Obfuscatory.getNext() else "youkai-compiled"
+    val config = ConfigManager.currentConfig.compiler
 
-    val name = if(Config.OBFUSCATE) Obfuscatory.getNext() else pack.name
+    val youkaiCompiledTextures = if(config.obfuscation) Obfuscatory.getNext() else "youkai-compiled"
+    val youkaiCompiledModels = if(config.obfuscation) Obfuscatory.getNext() else "youkai-compiled"
+
+    val name = if(config.obfuscation) Obfuscatory.getNext() else pack.name
 
     private val compilers = mutableListOf<Compiler>(
         PrepareFilesCompiler(this),
@@ -36,8 +40,6 @@ class BasePackCompiler(val pack: YoukaiPack, val outputPath: String) {
     )
 
     fun compile() {
-        if(Config.COMPILE_TO_ZIP) compilers.add(ZipCompiler(this))
-
         val results = compilers.mapIndexed { index, compiler ->
             try {
                 val result = compiler.compile()
@@ -58,8 +60,22 @@ class BasePackCompiler(val pack: YoukaiPack, val outputPath: String) {
         log("- ${AnsiColor.BRIGHT_GREEN}$successful successful", LogType.INFORMATION)
         log("- ${AnsiColor.RED}$failed failed", LogType.INFORMATION)
 
-        log("$outputPath/${pack.compiledPackFileName}.zip")
-        File("temp/${pack.compiledPackFileName}.zip").copyRecursively(File("$outputPath/${pack.compiledPackFileName}.zip"), true)
+        val zipFile = File("temp/${pack.compiledPackFileName}.zip")
+        val outputFile = File("$outputPath/${pack.compiledPackFileName}.zip")
+
+        outputFile.deleteRecursively()
+        outputFile.delete()
+        zipFile.copyRecursively(outputFile, true)
+
+        val publishing = ConfigManager.currentConfig.publishing
+        if(publishing.publish) {
+            val type = publishing.publishingService
+            val publisher = when(type) {
+                CLOUDFLARE_R2 -> CloudflareR2Publisher()
+                AMAZON_S3 -> AmazonS3Publisher()
+            }
+            publisher.push(zipFile)
+        }
 
         val models = mutableListOf<YoukaiServerModel>()
         results.forEach { result ->

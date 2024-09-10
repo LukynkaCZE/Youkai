@@ -1,6 +1,6 @@
 package cz.lukynka.youkai.objects
 
-import cz.lukynka.youkai.Config
+import cz.lukynka.youkai.config.ConfigManager
 import cz.lukynka.youkai.obfuscation.Obfuscatory
 import java.io.File
 
@@ -12,17 +12,19 @@ class Custom2dItem(val file: File): ResourcepackObject {
         verify()
     }
 
+    val config = ConfigManager.currentConfig.compiler
+
     override fun verify() {
         if(!file.exists()) throw Exception("File ${file.name} does not exist!")
         if(file.extension != "png") throw Exception("File ${file.name} is not in the PNG format!")
     }
 
     fun getAssetName(): String {
-        return if(Config.OBFUSCATE) "${obf}.${file.extension}" else file.name
+        return if(config.obfuscation) "${obf}.${file.extension}" else file.name
     }
 
     fun getAssetNameWithoutExtension(): String {
-        return if(Config.OBFUSCATE) obf else file.nameWithoutExtension
+        return if(config.obfuscation) obf else file.nameWithoutExtension
     }
 
     fun getNonObfAssetNameWithoutExtension(): String {

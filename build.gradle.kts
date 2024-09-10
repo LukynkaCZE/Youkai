@@ -21,6 +21,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.0")
     implementation("net.lingala.zip4j:zip4j:2.11.5")
+    implementation("software.amazon.awssdk:s3:2.27.22")
+    implementation("com.akuleshov7:ktoml-core:0.5.1")
+    implementation("com.akuleshov7:ktoml-file:0.5.1")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 

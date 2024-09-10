@@ -1,6 +1,7 @@
 package cz.lukynka.youkai.obfuscation
 
-import cz.lukynka.youkai.Config
+import cz.lukynka.youkai.config.ConfigManager
+import kotlinx.serialization.Serializable
 import java.util.*
 
 object Obfuscatory {
@@ -9,8 +10,10 @@ object Obfuscatory {
     private var currentString = ""
     private var currentIndex = 0
 
+    val config = ConfigManager.currentConfig.compiler
+
     init {
-        when(Config.OBFUSCATION_STRATEGY) {
+        when(config.obfuscationStrategy) {
             ObfuscationStrategy.UUID -> {}
             ObfuscationStrategy.ALPHABET -> currentString = alphabet[0].toString()
             ObfuscationStrategy.BASE64 -> {}
@@ -19,7 +22,7 @@ object Obfuscatory {
     }
 
     fun getNext(): String {
-        when(Config.OBFUSCATION_STRATEGY) {
+        when(config.obfuscationStrategy) {
             ObfuscationStrategy.UUID -> return UUID.randomUUID().toString()
             ObfuscationStrategy.ALPHABET -> {
                 val nextString = currentString
@@ -57,6 +60,7 @@ object Obfuscatory {
     }
 }
 
+@Serializable
 enum class ObfuscationStrategy {
     UUID,
     ALPHABET,

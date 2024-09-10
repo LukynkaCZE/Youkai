@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 import net.lingala.zip4j.ZipFile
 import java.io.*
 
-
 class ZipCompiler(val compiler: BasePackCompiler): Compiler {
 
     override fun compile(): CompiledResult {

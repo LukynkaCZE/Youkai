@@ -4,16 +4,13 @@ import cz.lukynka.youkai.objects.Custom2dItem
 import cz.lukynka.youkai.objects.Custom3dModel
 import cz.lukynka.prettylog.LoggerSettings
 import cz.lukynka.prettylog.LoggerStyle
+import cz.lukynka.youkai.config.ConfigManager
 import cz.lukynka.youkai.resourcepack.YoukaiPack
 import java.io.File
 
-object Youkai {
-    init {
-    }
-}
-
 fun main() {
     LoggerSettings.loggerStyle = LoggerStyle.BRACKET_PREFIX_WHITE_TEXT
+    ConfigManager.load()
 
     val pack = YoukaiPack("ember-seeker-pack")
     pack.compiledPackFileName = "§b§lEmber Seeker"

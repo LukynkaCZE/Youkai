@@ -2,6 +2,7 @@ package cz.lukynka.youkai
 
 import cz.lukynka.prettylog.LogType
 import cz.lukynka.prettylog.log
+import cz.lukynka.youkai.config.ConfigManager
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -18,12 +19,14 @@ fun sendCompiledPackRequest(sync: YoukaiSync) {
     val json = Json { ignoreUnknownKeys = true }
     val body = json.encodeToString<YoukaiSync>(sync)
 
-    Config.PACK_DATA_REQUESTS.forEach {
+    val config = ConfigManager.currentConfig.general
+
+    config.sendDataUrls.forEach {
         try {
             val request = HttpRequest.newBuilder()
                 .POST(BodyPublishers.ofString(body))
                 .uri(URI(it))
-                .header("Authorization", Config.TOKEN)
+                .header("Authorization", ConfigManager.currentConfig.general.youkaiToken)
                 .build()
             client.send(request, BodyHandlers.ofString())
         } catch (ex: Exception){

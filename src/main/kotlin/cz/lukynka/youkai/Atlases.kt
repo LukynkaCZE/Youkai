@@ -13,13 +13,11 @@ data class AtlasSource(
     val type: String,
     val source: String,
     val prefix: String
-) {
-}
+)
 
 @Serializable
-data class ResourceAtlas(
-    val sources: MutableList<AtlasSource>
-) {
+data class ResourceAtlas(val sources: MutableList<AtlasSource>) {
+
     constructor(vararg source: AtlasSource): this(source.toMutableList())
 
     fun toJson(): String {
